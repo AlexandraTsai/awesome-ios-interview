@@ -210,32 +210,14 @@ The Intrinsic Content Size is one of the most powerful features you gain when yo
 Let's take an example of `UIScrollView`:
 UIScrollView's bounds.origin will not be (0, 0) when its contentOffset is not (0, 0).
 
-### Transform
-Transform 是調整 view 的 frame，所以 View 本身的 bounds 並沒有變化
-
-> Use this property to scale or rotate the view's **frame** rectangle within its **superview's coordinate system**.
-
 ## What are layer objects and what do they represent?
-Layer 跟 View 最大的差別：**Layer 不能響應使用者事件**
-
-* `Layer objects` are data objects which represent **visual content**. 
-* Layer objects are **used by views** to render their content. 
-* Custom layer objects can also be added to the interface to implement complex animations and other types of sophisticated visual effects.
-
-  ```mermaid 
-  graph TD;
-      
-      UIView-->UIResponder;
-      UIResponder-->NSObject;
-      CALayer-->NSObject;
-  ```
+`Layer objects` are data objects which represent visual content. Layer objects are used by views to render their content. Custom layer objects can also be added to the interface to implement complex animations and other types of sophisticated visual effects.
 
 ## File owner
-https://www.jianshu.com/p/fb20d9239bf3
 
 Two points to be remembered:
-- The File owner is the object that loads the **nib**
-  > i.e. that object which receives the message `loadNibNamed:` or `initWithNibName:`.
+
+- The File owner is the object that loads the nib, i.e. that object which receives the message `loadNibNamed:` or `initWithNibName:`.
 - If you want to access any objects in the nib after loading it, you can set an outlet in the file owner.
 
 So you created a fancy view with lots of buttons, subviews etc . If you want to modify any of these views / objects any time after loading the nib FROM the loading object (usually a view or window controller) you set outlets for these objects to the file owner. It's that simple.
@@ -246,30 +228,25 @@ The reason it's called file owner and given a special place, is because unlike t
 
 ## App Life Cycle
 
-`application:willFinishLaunchingWithOptions:`—This method is your app’s first chance to **execute code** at launch time.
+application:willFinishLaunchingWithOptions:—This method is your app’s first chance to execute code at launch time.
 
-`application:didFinishLaunchingWithOptions:`—This method allows you to perform any final initialization **before** your app is **displayed** to the user.
+application:didFinishLaunchingWithOptions:—This method allows you to perform any final initialization before your app is displayed to the user.
 
-`applicationDidBecomeActive:`—Lets your app know that it is about to **become the foreground app**. Use this method for any last minute preparation.
+applicationDidBecomeActive:—Lets your app know that it is about to become the foreground app. Use this method for any last minute preparation.
 
-`applicationWillResignActive`:—Lets you know that your app is transitioning away from being the foreground app. Use this method to put your app into a quiescent state.
+applicationWillResignActive:—Lets you know that your app is transitioning away from being the foreground app. Use this method to put your app into a quiescent state.
 
-`applicationDidEnterBackground`:—Lets you know that your app is now **running in the background** and **may be suspended** at any time.
+applicationDidEnterBackground:—Lets you know that your app is now running in the background and may be suspended at any time.
 
-`applicationWillEnterForeground`:—Lets you know that your app is moving out of the background and back into the foreground, but that it is not yet active.
+applicationWillEnterForeground:—Lets you know that your app is moving out of the background and back into the foreground, but that it is not yet active.
 
-`applicationWillTerminate`:—Lets you know that your app is being terminated. This method is not called if your app is suspended.
+applicationWillTerminate:—Lets you know that your app is being terminated. This method is not called if your app is suspended.
+
 
 # Testing
 
 ### Unit Tests
-Tests the **smallest unit** of functionality, typically a **method/function** 
-> e.g. given a class with a particular state, calling x method on the class should cause y to happen
-
-Unit tests should be **focussed on one particular feature**
-> e.g., calling the pop method when the stack is empty should throw an InvalidOperationException
-
-Everything it touches should be done in memory; this means that the test code and the code under test **shouldn't**:
+Tests the smallest unit of functionality, typically a method/function (e.g. given a class with a particular state, calling x method on the class should cause y to happen). Unit tests should be focussed on one particular feature (e.g., calling the pop method when the stack is empty should throw an InvalidOperationException). Everything it touches should be done in memory; this means that the test code and the code under test shouldn't:
 
 1.	Call out into (non-trivial) collaborators
 2.	Access the network
@@ -281,19 +258,9 @@ Any kind of dependency that is slow / hard to understand / initialise / manipula
 In short, unit tests are as simple as possible, easy to debug, reliable (due to reduced external factors), fast to execute and help to prove that the smallest building blocks of your program function as intended before they're put together. The caveat is that, although you can prove they work perfectly in isolation, the units of code may blow up when combined which brings us to ...
 
 ### Integration Tests
-Integration tests build on unit tests by **combining** the units of code and **testing that the resulting combination functions correctly**. This can be either the innards of one system, or combining multiple systems together to do something useful. 
-
-* 和 unit tests 的差別是： **the environment**
-Integration tests can and will use **threads**, access the **database** or do whatever is required to ensure that all of the code and the different environment changes will work correctly.
-If you've built some serialization(連續的) code and unit tested its innards without touching the disk, how do you know that it'll work when you are loading and saving to disk? Maybe you forgot to flush and dispose filestreams. Maybe your file permissions are incorrect and you've tested the innards using in memory streams. The only way to find out for sure is to test it 'for real' using an environment that is closest to production.
-
-* **The main advantage:**
- they will find bugs that unit tests can't such as wiring bugs 
-  > (e.g. an instance of class A unexpectedly receives a null instance of B) 
-
-  and environment bugs (it runs fine on my single-CPU machine, but my colleague's 4 core machine can't pass the tests). 
-* **The main disadvantage:**
- integration tests touch more code, are less reliable, failures are harder to diagnose(診斷) and the tests are harder to maintain.
+Integration tests build on unit tests by combining the units of code and testing that the resulting combination functions correctly. This can be either the innards of one system, or combining multiple systems together to do something useful. Also, another thing that differentiates integration tests from unit tests is the environment. Integration tests can and will use threads, access the database or do whatever is required to ensure that all of the code and the different environment changes will work correctly.
+If you've built some serialization code and unit tested its innards without touching the disk, how do you know that it'll work when you are loading and saving to disk? Maybe you forgot to flush and dispose filestreams. Maybe your file permissions are incorrect and you've tested the innards using in memory streams. The only way to find out for sure is to test it 'for real' using an environment that is closest to production.
+The main advantage is that they will find bugs that unit tests can't such as wiring bugs (e.g. an instance of class A unexpectedly receives a null instance of B) and environment bugs (it runs fine on my single-CPU machine, but my colleague's 4 core machine can't pass the tests). The main disadvantage is that integration tests touch more code, are less reliable, failures are harder to diagnose and the tests are harder to maintain.
 Also, integration tests don't necessarily prove that a complete feature works. The user may not care about the internal details of my programs, but I do!
 
 ### Functional Tests
